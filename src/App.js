@@ -1,25 +1,58 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import "./App.css";
 
 function App() {
+  const [url, setUrl] = useState("");
+  const [summary, setSummary] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSummarize = async () => {
+    if (!url) return;
+    setLoading(true);
+    setSummary("");
+
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/summarize?url=${encodeURIComponent(url)}`
+      );
+      const text = await res.text();
+      setSummary(text);
+    } catch (err) {
+      setSummary("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
+    <div className="page">
+      <div className="card">
+        <h1>Smart Research Companion</h1>
+        <p className="subtitle">
+          Paste a research article or webpage URL to get an AI-powered summary
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+        <input
+          type="text"
+          placeholder="https://example.com"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+        />
+
+        <button onClick={handleSummarize} disabled={loading}>
+          {loading ? "Summarizing..." : "Summarize"}
+        </button>
+
+        {summary && (
+          <div className="summary">
+            <h3>Summary</h3>
+            <p>{summary}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
 export default App;
+
