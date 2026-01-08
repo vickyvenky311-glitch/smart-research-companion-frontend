@@ -1,66 +1,88 @@
-* {
-  box-sizing: border-box;
-  font-family: "Segoe UI", sans-serif;
+/* Page background */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  min-height: 100vh;
 }
 
-.page {
+/* Center container */
+.app-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea, #764ba2);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
 }
 
+/* White card */
 .card {
   background: #ffffff;
   width: 100%;
   max-width: 700px;
-  padding: 30px;
-  border-radius: 12px;
+  padding: 32px;
+  border-radius: 16px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
-h1 {
+/* Headings */
+.card h1 {
+  margin-top: 0;
   margin-bottom: 8px;
 }
 
-.subtitle {
+.card p {
   color: #555;
   margin-bottom: 20px;
 }
 
-input {
+/* Inputs */
+input[type="text"],
+input[type="file"] {
   width: 100%;
   padding: 12px;
-  font-size: 16px;
-  border-radius: 6px;
+  margin-bottom: 14px;
+  border-radius: 8px;
   border: 1px solid #ccc;
-  margin-bottom: 15px;
+  font-size: 14px;
 }
 
+/* Button */
 button {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
   background: #667eea;
   color: white;
-  border: none;
-  border-radius: 6px;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background: #5a67d8;
 }
 
 button:disabled {
-  background: #aaa;
+  opacity: 0.7;
   cursor: not-allowed;
 }
 
+/* Error */
+.error {
+  color: #d32f2f;
+  margin-top: 12px;
+  font-weight: 500;
+}
+
+/* Summary box */
 .summary {
-  margin-top: 25px;
-  background: #f8f9fc;
+  margin-top: 24px;
   padding: 20px;
-  border-radius: 8px;
+  background: #f8f9fb;
   border-left: 4px solid #667eea;
+  border-radius: 8px;
 }
 
 .summary h3 {

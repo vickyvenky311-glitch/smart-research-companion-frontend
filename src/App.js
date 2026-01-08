@@ -1,38 +1,79 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import "./App.css";
 
 function App() {
   const [url, setUrl] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
   const [summary, setSummary] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSummarize = async () => {
-    if (!url) return;
-    setLoading(true);
+    setError("");
     setSummary("");
+    setLoading(true);
 
     try {
-      const res = await fetch(
-        `http://localhost:8080/api/summarize?url=${encodeURIComponent(url)}`
-      );
-      const text = await res.text();
-      setSummary(text);
+      // ----------------------------
+      // PRIORITY 1: PDF
+      // ----------------------------
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+
+        const response = await fetch(
+          "http://localhost:8080/api/summarize-pdf",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to summarize PDF");
+        }
+
+        const data = await response.text();
+        setSummary(data);
+        return;
+      }
+
+      // ----------------------------
+      // PRIORITY 2: URL
+      // ----------------------------
+      if (url.trim() !== "") {
+        const response = await fetch(
+          `http://localhost:8080/api/summarize?url=${encodeURIComponent(url)}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to summarize URL");
+        }
+
+        const data = await response.text();
+        setSummary(data);
+        return;
+      }
+
+      // ----------------------------
+      // NOTHING PROVIDED
+      // ----------------------------
+      setError("Please enter a URL or upload a PDF.");
     } catch (err) {
-      setSummary("Something went wrong. Please try again.");
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="page">
+    <div className="app-container">
       <div className="card">
         <h1>Smart Research Companion</h1>
-        <p className="subtitle">
-          Paste a research article or webpage URL to get an AI-powered summary
-        </p>
+        <p>Paste a research article URL or upload a PDF to get an AI summary</p>
 
+        {/* URL INPUT */}
         <input
           type="text"
           placeholder="https://example.com"
@@ -40,10 +81,22 @@ function App() {
           onChange={(e) => setUrl(e.target.value)}
         />
 
+        {/* FILE INPUT */}
+        <input
+          type="file"
+          accept="application/pdf"
+          onChange={(e) => setSelectedFile(e.target.files[0])}
+        />
+
+        {/* SINGLE BUTTON */}
         <button onClick={handleSummarize} disabled={loading}>
           {loading ? "Summarizing..." : "Summarize"}
         </button>
 
+        {/* ERROR */}
+        {error && <p className="error">{error}</p>}
+
+        {/* SUMMARY */}
         {summary && (
           <div className="summary">
             <h3>Summary</h3>
