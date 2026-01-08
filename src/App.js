@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import "./App.css";
 
 function App() {
@@ -46,7 +47,7 @@ function App() {
         {summary && (
           <div className="summary">
             <h3>Summary</h3>
-            <p>{summary}</p>
+            <ReactMarkdown>{summary}</ReactMarkdown>
           </div>
         )}
       </div>
